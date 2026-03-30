@@ -58,12 +58,10 @@ fn main() {
 }
 
 fn setup_server_routing() {
-    Command::new("sysctl")
-        .args(["-w", "net.ipv4.ip_forward=1"])
-        .status()
+    std::fs::write("/proc/sys/net/ipv4/ip_forward", "1")
         .expect("failed to enable ip forwarding");
 
-    Command::new("iptables")
+    Command::new("/user/sbin/iptables")
         .args(["-t", "nat", "-A", "POSTROUTING", "-s", "10.0.0.0/24", "-j", "MASQUERADE"])
         .status()
         .expect("failed to set up NAT");
